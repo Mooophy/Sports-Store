@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SportsStore.Domain.Entities
 {
-    class Product
+    public class Product
     {
         public int ProductID { get; set; }
         public string Name { get; set; }
