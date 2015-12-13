@@ -13,7 +13,11 @@ namespace SportsStore.WebUI.Controllers
         private IProductsRepository repository;
         public ProductController(IProductsRepository productRepository)
         {
-            this.repository = productRepository;
+            repository = productRepository;
+        }
+        public ViewResult List()
+        {
+            return View(repository.Products);
         }
     }
 }
