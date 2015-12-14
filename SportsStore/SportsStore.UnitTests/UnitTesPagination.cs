@@ -16,32 +16,6 @@ namespace SportsStore.UnitTests
     public class UnitTesPagination
     {
         [TestMethod]
-        public void Can_Paginate()
-        {
-            //Arange
-            Mock<IProductsRepository> mock = new Mock<IProductsRepository>();
-            mock.Setup(m => m.Products).Returns(new Product[]
-            {
-                new Product {ProductID = 1, Name = "P1" },
-                new Product {ProductID = 2, Name = "P2" },
-                new Product {ProductID = 3, Name = "P3" },
-                new Product {ProductID = 4, Name = "P4" },
-                new Product {ProductID = 5, Name = "P5" },
-            }.AsQueryable());
-            var controller = new ProductController(mock.Object);
-            controller.PageSize = 3;
-
-            //Act
-            IEnumerable<Product> result = (IEnumerable<Product>)controller.List(2).Model;
-
-            //Assert
-            var prodArray = result.ToArray();
-            Assert.AreEqual(2, prodArray.Length);
-            Assert.AreEqual("P4", prodArray[0].Name);
-            Assert.AreEqual("P5", prodArray[1].Name);
-        }
-
-        [TestMethod]
         public void Can_Generate_Page_Links()
         {
             HtmlHelper helper = null;
@@ -50,6 +24,35 @@ namespace SportsStore.UnitTests
             MvcHtmlString result = helper.PageLinks(pagingInfo, pageUrlDelegate);
             var expect = @"<a href=""Page1"">1</a>" + @"<a class=""selected"" href=""Page2"">2</a>" + @"<a href=""Page3"">3</a>";
             Assert.AreEqual(expect, result.ToString());
+        }
+
+        [TestMethod]
+        public void Can_Send_Pagination_View_Model()
+        {
+            // Arrange
+            Mock<IProductRepository> mock = new Mock<IProductRepository>();
+            mock
+                .Setup(m => m.Products)
+                .Returns
+                (
+                    new Product[]
+                    {
+                        new Product {ProductID = 1, Name = "P1"},
+                        new Product {ProductID = 2, Name = "P2"},
+                        new Product {ProductID = 3, Name = "P3"},
+                        new Product {ProductID = 4, Name = "P4"},
+                        new Product {ProductID = 5, Name = "P5"}
+                    }
+                    .AsQueryable()
+                );
+            var controller = new ProductController(mock.Object) { PageSize = 3 };
+            var result = (ProductsListViewModel)controller.List(2).Model;
+
+            //Assert
+            Assert.AreEqual(2, result.PagingInfo.CurrentPage);
+            Assert.AreEqual(3, result.PagingInfo.ItemsPerPage);
+            Assert.AreEqual(5, result.PagingInfo.TotalItems);
+            Assert.AreEqual(2, result.PagingInfo.TotalPages);
         }
     }
 }
