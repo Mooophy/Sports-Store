@@ -6,11 +6,14 @@ using Moq;
 using SportsStore.Domain.Abstract;
 using SportsStore.Domain.Entities;
 using SportsStore.WebUI.Controllers;
+using SportsStore.WebUI.Models;
+using System.Web.Mvc;
+using SportsStore.WebUI.HtmlHelpers;
 
 namespace SportsStore.UnitTests
 {
     [TestClass]
-    public class UnitTes1
+    public class UnitTesPagination
     {
         [TestMethod]
         public void Can_Paginate()
@@ -36,6 +39,17 @@ namespace SportsStore.UnitTests
             Assert.AreEqual(2, prodArray.Length);
             Assert.AreEqual("P4", prodArray[0].Name);
             Assert.AreEqual("P5", prodArray[1].Name);
+        }
+
+        [TestMethod]
+        public void Can_Generate_Page_Links()
+        {
+            HtmlHelper helper = null;
+            var pagingInfo = new PagingInfo { CurrentPage = 2, TotalItems = 28, ItemsPerPage = 10 };
+            Func<int, string> pageUrlDelegate = i => "Page" + i;
+            MvcHtmlString result = helper.PageLinks(pagingInfo, pageUrlDelegate);
+            var expect = @"<a href=""Page1"">1</a>" + @"<a class=""selected"" href=""Page2"">2</a>" + @"<a href=""Page3"">3</a>";
+            Assert.AreEqual(expect, result.ToString());
         }
     }
 }

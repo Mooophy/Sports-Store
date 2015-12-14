@@ -14,7 +14,7 @@ namespace SportsStore.WebUI.Models
         {
             get
             {
-                return (int)Math.Ceiling((decimal)TotalItems / TotalPages);
+                return (int)Math.Ceiling((decimal)TotalItems / ItemsPerPage);
             }
         }
     }
