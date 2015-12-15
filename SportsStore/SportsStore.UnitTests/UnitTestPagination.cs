@@ -16,6 +16,34 @@ namespace SportsStore.UnitTests
     public class UnitTestPagination
     {
         [TestMethod]
+        public void Can_Paginate()
+        {
+            //Arrange 
+            // - create the mock repository
+            var mock = new Mock<IProductRepository>();
+            mock.Setup(m => m.Products).Returns(new Product[]
+            {
+                new Product {ProductID = 1, Name = "P1" },
+                new Product {ProductID = 2, Name = "P2" },
+                new Product {ProductID = 3, Name = "P3" },
+                new Product {ProductID = 4, Name = "P4" },
+                new Product {ProductID = 5, Name = "P5" },
+            }.AsQueryable());
+
+            // create a controller and make the page size 3 items
+            var controller = new ProductController(mock.Object) { PageSize = 3 };
+
+            // Action 
+            var result = (ProductsListViewModel)controller.List(2).Model;
+
+            // Assert
+            var prodArray = result.Products.ToArray();
+            Assert.AreEqual(2, prodArray.Length);
+            Assert.AreEqual(prodArray[0].Name, "P4");
+            Assert.AreEqual(prodArray[1].Name, "P5");
+        }
+
+        [TestMethod]
         public void Can_Generate_Page_Links()
         {
             HtmlHelper helper = null;
